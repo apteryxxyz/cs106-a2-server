@@ -1,0 +1,15 @@
+{
+    "extends": "ts-config-apteryx",
+    "compilerOptions": {
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "outDir": "./dist",
+        "lib": ["esnext"],
+        "target": "esnext",
+        "paths": {
+            "@/*": ["./src/lib/*"]
+        }
+    },
+    "exclude": ["./node_modules/", "./dist/", "./**/_*"],
+    "include": ["./src/**/**.ts"]
+}
