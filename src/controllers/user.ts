@@ -51,6 +51,7 @@ export class UserController {
         if (!isObject(req.body)) return this._sendError(res, 400);
         const newUser: Record<string, any> = { ...req.body };
         delete newUser['id'];
+        delete newUser['type'];
 
         if (!User.isPartialUser(newUser)) return this._sendError(res, 400);
         const modifiedUser = Object.assign({}, user, newUser);
