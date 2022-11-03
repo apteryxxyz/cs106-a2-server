@@ -6,3 +6,6 @@ dist/
 
 # Data
 data/*.json
+
+# Sercets
+.env
