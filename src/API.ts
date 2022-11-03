@@ -12,8 +12,6 @@ export class API {
     public rest: Express;
     public database: Database;
 
-    private _port = 3000;
-
     public constructor(database: Database) {
         this.rest = express();
         this.database = database;
@@ -29,8 +27,8 @@ export class API {
         );
     }
 
-    public open() {
-        this.server = this.rest.listen(this._port);
+    public open(port: number) {
+        this.server = this.rest.listen(port);
     }
 
     public close() {

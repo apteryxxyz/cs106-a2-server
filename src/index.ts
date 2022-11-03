@@ -5,6 +5,6 @@ const database = new Database();
 const api = new API(database);
 
 database.load();
-api.open();
+api.open(Number.parseInt(process.env['PORT'] as string));
 
 export { database, api };
