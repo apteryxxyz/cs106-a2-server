@@ -22,7 +22,7 @@ export class UserController {
         newUser['id'] = this._database.flake();
 
         if (this._database.users.some(u => u.email_address === newUser['email_address']))
-            this._sendError(res, 409);
+            return this._sendError(res, 409);
 
         if (!User.isUser(newUser)) return this._sendError(res, 400);
         this._database.users.set(newUser['id'], newUser);
