@@ -43,16 +43,16 @@ export class Database {
 
     public save() {
         const newAuthors = Array.from(this.authors.values());
-        writeFileSync(Author.tablePath, JSON.stringify(newAuthors));
+        writeFileSync(Author.tablePath, JSON.stringify(newAuthors, null, 4));
 
         const newBooks = Array.from(this.books.values());
-        writeFileSync(Book.tablePath, JSON.stringify(newBooks));
+        writeFileSync(Book.tablePath, JSON.stringify(newBooks, null, 4));
 
         const newBorrows = Array.from(this.borrows.values());
-        writeFileSync(Borrow.tablePath, JSON.stringify(newBorrows));
+        writeFileSync(Borrow.tablePath, JSON.stringify(newBorrows, null, 4));
 
         const newUsers = Array.from(this.users.values());
-        writeFileSync(User.tablePath, JSON.stringify(newUsers));
+        writeFileSync(User.tablePath, JSON.stringify(newUsers, null, 4));
 
         return this;
     }
