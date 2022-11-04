@@ -1,4 +1,5 @@
 import { Collection } from '@discordjs/collection';
+import * as jwt from 'jsonwebtoken';
 import * as uniqid from 'uniqid';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { Author } from './models/Author';
@@ -55,5 +56,18 @@ export class Database {
         writeFileSync(User.tablePath, JSON.stringify(newUsers, null, 4));
 
         return this;
+    }
+
+    public createToken(user: User) {
+        return jwt.sign({ id: user.id }, process.env['JWT_SECRET'], { expiresIn: '1h' });
+    }
+
+    public verifyToken(token: string) {
+        try {
+            const { id } = jwt.verify(token, process.env['JWT_SECRET']) as { id: string };
+            return this.users.get(id);
+        } catch {
+            return null;
+        }
     }
 }
