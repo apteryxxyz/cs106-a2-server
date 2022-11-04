@@ -10,6 +10,15 @@ export class UserController {
         this._database = database;
     }
 
+    public createToken(req: Request, res: Response) {
+        const { email_address, password } = req.body;
+        const user = this._database.users.find(u => u.email_address === email_address);
+        if (!user) return this._sendError(res, 401);
+
+        if (user.password !== password) return this._sendError(res, 401);
+        return res.json({ token: this._database.createToken(user) });
+    }
+
     public listUsers(_req: Request, res: Response) {
         const users = Array.from(this._database.users.clone().values());
         users.forEach(u => Reflect.set(u, 'password', null));
@@ -31,7 +40,7 @@ export class UserController {
     }
 
     public getUser(req: Request, res: Response) {
-        const user = this._database.users.get(req.params['userId']);
+        const user = this._database.users.clone().get(req.params['userId']);
         if (user) Reflect.set(user, 'password', null);
         return user ? res.json(user) : this._sendError(res, 404);
     }
