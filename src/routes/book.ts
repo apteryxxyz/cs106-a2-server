@@ -16,7 +16,7 @@ export function bookRoutes(database: Database): Router {
     router.put('/books', _a(), __(controller.createBook));
 
     router.get('/books/:bookId', _u(), __(controller.getBook));
-    router.patch('/books/:bookId', _a(), __(controller.modifyBook));
+    router.post('/books/:bookId', _a(), __(controller.modifyBook));
     router.delete('/books/:bookId', _a(), __(controller.deleteBook));
 
     router.get('/books/:bookId/borrows', _a(), __(controller.listBookBorrows));

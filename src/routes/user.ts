@@ -18,7 +18,7 @@ export function userRoutes(database: Database): Router {
     router.put('/users', _a(), __(controller.createUser));
 
     router.get('/users/:userId', _m(), __(controller.getUser));
-    router.patch('/users/:userId', _m(), __(controller.modifyUser));
+    router.post('/users/:userId', _m(), __(controller.modifyUser));
     router.delete('/users/:userId', _m(), __(controller.deleteUser));
 
     router.get('/users/:userId/borrows', _m(), __(controller.listUserBorrows));

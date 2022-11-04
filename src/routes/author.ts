@@ -16,7 +16,7 @@ export function authorRoutes(database: Database): Router {
     router.put('/authors', _a(), __(controller.createAuthor));
 
     router.get('/authors/:authorId', _u(), __(controller.getAuthor));
-    router.patch('/authors/:authorId', _a(), __(controller.modifyAuthor));
+    router.post('/authors/:authorId', _a(), __(controller.modifyAuthor));
     router.delete('/authors/:authorId', _a(), __(controller.deleteAuthor));
 
     router.get('/authors/:authorId/books', _u(), __(controller.listAuthorsBooks));
