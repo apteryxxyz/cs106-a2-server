@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { BorrowController } from '../controllers/borrow';
 import type { Database } from '../Database';
-import { authenticateUser } from '../middlewares/authenticate';
+import { authenticateMember, authenticateUser } from '../middlewares/authenticate';
 
 // Router for '/borrows'
 export function borrowRoutes(database: Database): Router {
@@ -10,12 +10,13 @@ export function borrowRoutes(database: Database): Router {
 
     const __ = (fn: any) => fn.bind(controller);
     const _u = () => authenticateUser(database);
+    const _m = () => authenticateMember(database);
 
     router.get('/borrows', _u(), __(controller.listBorrows));
     router.put('/borrows', _u(), __(controller.createBorrow));
 
-    router.get('/borrows/:borrowId', _u(), __(controller.getBorrow));
-    router.delete('/borrows/:borrowId', _u(), __(controller.deleteBorrow));
+    router.get('/borrows/:borrowId', _m(), __(controller.getBorrow));
+    router.delete('/borrows/:borrowId', _m(), __(controller.deleteBorrow));
 
     return router;
 }
