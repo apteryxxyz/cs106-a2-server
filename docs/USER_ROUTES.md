@@ -4,7 +4,7 @@
 
 Firstly, a user object has the following shape.
 
--   `id` User ID.
+-   `id` User ID
 -   `type` 1 for admin, 2 for normal member
 -   `first_name` Users first name
 -   `last_name` Users family name
@@ -17,7 +17,7 @@ Firstly, a user object has the following shape.
 
 ## POST /token (E)
 
-Use this endpoint to get a user access token.
+Get a new access token for a users account.
 
 **Request** body
 
@@ -30,23 +30,23 @@ Use this endpoint to get a user access token.
 
 ## GET /users (A)
 
-Get an array of **all** of the users.
+Get a list of all the of users, including admins and members. All user `password` fields will be `null`.
 
 **Response** body
 
-Array of [User Object](#user-object)s.
+An array of [User Object](#user-object)s.
 
-## POST /users (A)
+## PUT /users (A)
 
-Create a brand new user account.
+Register a new user account.
 
 **Request** body
 
-A [User Object](#user-object), ID and type fields are ignored, must include password, email address must be unique.
+A [User Object](#user-object), ID field is ignored, must include password, email address must be unique.
 
 **Response** body
 
-The the created [User Object](#user-object).
+The created [User Object](#user-object), `password` will be `null`.
 
 ## GET /users/:userId (M)
 
@@ -54,7 +54,7 @@ Get a user by their ID.
 
 **Response** body
 
-A [User Object](#user-object).
+A [User Object](#user-object),`password` will be `null`.
 
 ## POST /users/:userId (M)
 
@@ -70,12 +70,12 @@ The new [User Object](#user-object).
 
 ## DELETE /users/:userId (M)
 
-Delete a user from the database by their ID.
+Delete a user by their ID.
 
 ## GET /users/:userId/borrows (M)
 
-Get a list of the borrows this user has.
+Get a list of the currently borrowed books a user has.
 
 **Response** body
 
-An array of [Borrow Object](DOCS/BORROW_ROUTES.md#borrow-object)s.
+An array of [Borrow Object](docs/BORROW_ROUTES.md#borrow-object)s.
