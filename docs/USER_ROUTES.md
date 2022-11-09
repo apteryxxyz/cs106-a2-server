@@ -15,7 +15,7 @@ Firstly, a user object has the following shape.
 -   `home_address_2` Second line of their address
 -   `post_code` Post code for address
 
-## POST /token (E)
+## POST /login (E)
 
 Get a new access token for a users account.
 
@@ -26,6 +26,8 @@ Get a new access token for a users account.
 
 **Response** body
 
+-   `user_id` ID of the account.
+-   `user_type` The type of the account.
 -   `token` Account access token.
 
 ## GET /users (A)

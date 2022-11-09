@@ -4,7 +4,7 @@ This project is the backend server for our Library Management System. It contain
 
 ## Access Token
 
-Firstly, I'll say that all endpoints (beside the login endpoint) require a users access token in order to work. To get a token, you must pass account credentials to the `/token` endpoint.
+Firstly, I'll say that all endpoints (beside the login endpoint) require a users access token in order to work. To get a token, you must pass account credentials to the `/login` endpoint.
 
 All endponts will have letter in brackets to represent who can access it.
 

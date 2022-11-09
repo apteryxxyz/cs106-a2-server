@@ -12,7 +12,7 @@ export function userRoutes(database: Database): Router {
     const _a = () => authenticateAdmin(database);
     const _m = () => authenticateMember(database);
 
-    router.post('/token', __(controller.createToken));
+    router.post('/login', __(controller.userLogin));
 
     router.get('/users', _a(), __(controller.listUsers));
     router.put('/users', _a(), __(controller.createUser));

@@ -10,13 +10,17 @@ export class UserController {
         this._database = database;
     }
 
-    public createToken(req: Request, res: Response) {
+    public userLogin(req: Request, res: Response) {
         const { email_address, password } = req.body;
         const user = this._database.users.find(u => u.email_address === email_address);
         if (!user) return this._sendError(res, 401);
 
         if (user.password !== password) return this._sendError(res, 401);
-        return res.json({ token: this._database.createToken(user) });
+        return res.json({
+            user_id: user.id,
+            user_type: user.type,
+            token: this._database.createToken(user),
+        });
     }
 
     public listUsers(_req: Request, res: Response) {
