@@ -11,6 +11,7 @@ export namespace Book {
         author_id: s.string,
         title: s.string,
         description: s.string,
+        genre: s.string,
         cover_image_url: s.string,
         quantity: s.number,
     });
