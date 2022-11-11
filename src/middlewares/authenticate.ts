@@ -49,7 +49,11 @@ export function authenticateUser(database: Database) {
     return function _(req: Request, res: Response, next: NextFunction) {
         const token = req.headers.authorization;
         const user = token ? database.verifyToken(token) : null;
-        if (!user) return res.status(401).json({ status: 401 });
+        if (!user) {
+            res.status(401).json({ status: 401 });
+            return;
+        }
+
         next();
     };
 }
