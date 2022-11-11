@@ -13,6 +13,7 @@ specifiers:
   '@types/uniqid': ^5.3.2
   '@typescript-eslint/eslint-plugin': ^5.42.1
   '@typescript-eslint/parser': ^5.42.1
+  dotenv: ^16.0.3
   eslint: ^8.27.0
   eslint-config-apteryx: ^2.0.1
   eslint-config-prettier: ^8.5.0
@@ -25,6 +26,7 @@ specifiers:
   eslint-plugin-typescript-sort-keys: ^2.1.0
   eslint-plugin-unicorn: ^44.0.2
   express: ^4.18.2
+  fuzzysort: ^2.0.3
   husky: ^8.0.2
   jsonwebtoken: ^8.5.1
   lint-staged: ^13.0.3
@@ -40,7 +42,9 @@ specifiers:
 dependencies:
   '@discordjs/collection': 1.2.0
   '@sapphire/shapeshift': 3.7.0
+  dotenv: 16.0.3
   express: 4.18.2
+  fuzzysort: 2.0.3
   jsonwebtoken: 8.5.1
   lodash: 4.17.21
   uniqid: 5.4.0
@@ -1631,6 +1635,14 @@ packages:
       is-obj: 2.0.0
     dev: true
 
+  /dotenv/16.0.3:
+    resolution:
+      {
+        integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==,
+      }
+    engines: { node: '>=12' }
+    dev: false
+
   /eastasianwidth/0.2.0:
     resolution:
       {
@@ -2490,6 +2502,13 @@ packages:
         integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==,
       }
     dev: true
+
+  /fuzzysort/2.0.3:
+    resolution:
+      {
+        integrity: sha512-ridbZloOhbVCom7MDF//Blt4N6d6L4uWNEiBuYBx4Qr+G55A9qItgsAqrRZGgs8q+mFpyBbwi5FL+FWUQPJCew==,
+      }
+    dev: false
 
   /get-caller-file/2.0.5:
     resolution:

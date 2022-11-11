@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import * as fuzzysort from 'fuzzysort';
 import { isObject } from 'lodash';
 import type { Database } from '../Database';
 import { Book } from '../models/Book';
@@ -10,8 +11,18 @@ export class BookContoller {
         this._database = database;
     }
 
-    public listBooks(_req: Request, res: Response) {
-        return res.json(Array.from(this._database.books.values()));
+    public listBooks(req: Request, res: Response) {
+        const query = req.query['q'] ? String(req.query['q']).toLowerCase() : null;
+
+        let books = Array.from(this._database.books.clone().values());
+
+        if (query) {
+            const keys = ['title', 'description', 'isbn'];
+            const results = fuzzysort.go(query, books, { keys });
+            books = results.map(res => res.obj);
+        }
+
+        return res.json(books);
     }
 
     public createBook(req: Request, res: Response) {

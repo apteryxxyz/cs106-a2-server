@@ -17,7 +17,9 @@
     "dependencies": {
         "@discordjs/collection": "^1.2.0",
         "@sapphire/shapeshift": "^3.7.0",
+        "dotenv": "^16.0.3",
         "express": "^4.18.2",
+        "fuzzysort": "^2.0.3",
         "jsonwebtoken": "^8.5.1",
         "lodash": "^4.17.21",
         "uniqid": "^5.4.0"
