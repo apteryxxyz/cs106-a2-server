@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import process from 'node:process';
+import * as process from 'node:process';
 import { Collection } from '@discordjs/collection';
 import * as jwt from 'jsonwebtoken';
 import * as uniqid from 'uniqid';

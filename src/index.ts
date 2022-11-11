@@ -1,4 +1,5 @@
-import process from 'node:process';
+import 'dotenv/config';
+import * as process from 'node:process';
 import { API } from './API';
 import { Database } from './Database';
 
