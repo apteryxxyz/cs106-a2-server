@@ -4,7 +4,7 @@ import type { Database } from '../Database';
 import { Borrow } from '../models/Borrow';
 
 export class BorrowController {
-    private _database: Database;
+    private readonly _database: Database;
 
     public constructor(database: Database) {
         this._database = database;
@@ -26,7 +26,7 @@ export class BorrowController {
         if (!user) return this._sendError(res, 404);
 
         if (!Borrow.isBorrow(newBorrow)) return this._sendError(res, 400);
-        this._database.borrows.set(newBorrow['id'], newBorrow);
+        this._database.borrows.set(newBorrow.id, newBorrow);
         this._database.save();
         return res.json(newBorrow);
     }

@@ -1,7 +1,8 @@
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import process from 'node:process';
 import { Collection } from '@discordjs/collection';
 import * as jwt from 'jsonwebtoken';
 import * as uniqid from 'uniqid';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { Author } from './models/Author';
 import { Book } from './models/Book';
 import { Borrow } from './models/Borrow';
@@ -9,8 +10,11 @@ import { User } from './models/User';
 
 export class Database {
     public authors = new Collection<string, Author>();
+
     public books = new Collection<string, Book>();
+
     public users = new Collection<string, User>();
+
     public borrows = new Collection<string, Borrow>();
 
     public constructor() {
@@ -59,12 +63,12 @@ export class Database {
     }
 
     public createToken(user: User) {
-        return jwt.sign({ id: user.id }, process.env['JWT_SECRET'], { expiresIn: '1h' });
+        return jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     }
 
     public verifyToken(token: string) {
         try {
-            const { id } = jwt.verify(token, process.env['JWT_SECRET']) as { id: string };
+            const { id } = jwt.verify(token, process.env.JWT_SECRET) as { id: string };
             return this.users.get(id);
         } catch {
             return null;

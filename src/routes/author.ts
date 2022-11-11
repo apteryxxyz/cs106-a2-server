@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { AuthorContoller } from '../controllers/author';
 import type { Database } from '../Database';
+import { AuthorContoller } from '../controllers/author';
 import { authenticateAdmin, authenticateUser } from '../middlewares/authenticate';
 
 // Router for '/authors'

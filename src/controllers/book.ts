@@ -4,7 +4,7 @@ import type { Database } from '../Database';
 import { Book } from '../models/Book';
 
 export class BookContoller {
-    private _database: Database;
+    private readonly _database: Database;
 
     public constructor(database: Database) {
         this._database = database;
@@ -23,7 +23,7 @@ export class BookContoller {
         if (!author) return this._sendError(res, 404);
 
         if (!Book.isBook(newBook)) return this._sendError(res, 400);
-        this._database.books.set(newBook['id'], newBook);
+        this._database.books.set(newBook.id, newBook);
         this._database.save();
         return res.json(newBook);
     }
@@ -37,7 +37,7 @@ export class BookContoller {
         const book = this._database.books.get(req.params['bookId']);
         if (!book) return this._sendError(res, 404);
 
-        const bookBorrows = this._database.borrows.filter(b => b.book_id === book.id);
+        const bookBorrows = this._database.borrows.filter(brw => brw.book_id === book.id);
         return res.json(Array.from(bookBorrows.values()));
     }
 
@@ -50,7 +50,7 @@ export class BookContoller {
         delete newBook['id'];
 
         if (!Book.isPartialBook(newBook)) return this._sendError(res, 400);
-        const modifiedBook = Object.assign({}, book, newBook);
+        const modifiedBook = { ...book, ...newBook };
         if (!Book.isBook(modifiedBook)) return this._sendError(res, 400);
 
         this._database.books.set(book.id, modifiedBook);

@@ -1,6 +1,6 @@
+import type { Server } from 'node:http';
 import type { Express } from 'express';
 import * as express from 'express';
-import type { Server } from 'node:http';
 import type { Database } from './Database';
 import { authorRoutes } from './routes/author';
 import { bookRoutes } from './routes/book';
@@ -9,7 +9,9 @@ import { userRoutes } from './routes/user';
 
 export class API {
     public server?: Server;
+
     public rest: Express;
+
     public database: Database;
 
     public constructor(database: Database) {

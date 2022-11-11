@@ -4,7 +4,7 @@ import type { Database } from '../Database';
 import { Author } from '../models/Author';
 
 export class AuthorContoller {
-    private _database: Database;
+    private readonly _database: Database;
 
     public constructor(database: Database) {
         this._database = database;
@@ -20,7 +20,7 @@ export class AuthorContoller {
         newAuthor['id'] = this._database.flake();
 
         if (!Author.isAuthor(newAuthor)) return this._sendError(res, 400);
-        this._database.authors.set(newAuthor['id'], newAuthor);
+        this._database.authors.set(newAuthor.id, newAuthor);
         this._database.save();
         return res.json(newAuthor);
     }
@@ -34,7 +34,7 @@ export class AuthorContoller {
         const author = this._database.authors.get(req.params['authorId']);
         if (!author) return this._sendError(res, 404);
 
-        const authorBooks = this._database.books.filter(b => b.author_id === author.id);
+        const authorBooks = this._database.books.filter(bk => bk.author_id === author.id);
         return res.json(Array.from(authorBooks.values()));
     }
 
@@ -47,7 +47,7 @@ export class AuthorContoller {
         delete newAuthor['id'];
 
         if (!Author.isPartialAuthor(newAuthor)) return this._sendError(res, 400);
-        const modifiedAuthor = Object.assign({}, author, newAuthor);
+        const modifiedAuthor = { ...author, ...newAuthor };
         if (!Author.isAuthor(modifiedAuthor)) return this._sendError(res, 400);
 
         this._database.authors.set(author.id, modifiedAuthor);

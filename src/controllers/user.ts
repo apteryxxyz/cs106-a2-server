@@ -4,7 +4,7 @@ import type { Database } from '../Database';
 import { User } from '../models/User';
 
 export class UserController {
-    private _database: Database;
+    private readonly _database: Database;
 
     public constructor(database: Database) {
         this._database = database;
@@ -12,7 +12,7 @@ export class UserController {
 
     public userLogin(req: Request, res: Response) {
         const { email_address, password } = req.body;
-        const user = this._database.users.find(u => u.email_address === email_address);
+        const user = this._database.users.find(usr => usr.email_address === email_address);
         if (!user) return this._sendError(res, 401);
 
         if (user.password !== password) return this._sendError(res, 401);
@@ -25,7 +25,7 @@ export class UserController {
 
     public listUsers(_req: Request, res: Response) {
         const users = Array.from(this._database.users.clone().values());
-        users.forEach(u => Reflect.set(u, 'password', null));
+        for (const usr of users) Reflect.set(usr, 'password', null);
         return res.json(users);
     }
 
@@ -34,11 +34,11 @@ export class UserController {
         const newUser: Record<string, any> = { ...req.body };
         newUser['id'] = this._database.flake();
 
-        if (this._database.users.some(u => u.email_address === newUser['email_address']))
+        if (this._database.users.some(usr => usr.email_address === newUser['email_address']))
             return this._sendError(res, 409);
 
         if (!User.isUser(newUser)) return this._sendError(res, 400);
-        this._database.users.set(newUser['id'], newUser);
+        this._database.users.set(newUser.id, newUser);
         this._database.save();
         return res.json(newUser);
     }
@@ -53,7 +53,7 @@ export class UserController {
         const user = this._database.users.get(req.params['userId']);
         if (!user) return this._sendError(res, 404);
 
-        const userBorrows = this._database.borrows.filter(b => b.borrower_id === user.id);
+        const userBorrows = this._database.borrows.filter(brw => brw.borrower_id === user.id);
         return res.json(Array.from(userBorrows.values()));
     }
 
@@ -67,7 +67,7 @@ export class UserController {
         delete newUser['type'];
 
         if (!User.isPartialUser(newUser)) return this._sendError(res, 400);
-        const modifiedUser = Object.assign({}, user, newUser);
+        const modifiedUser = { ...user, ...newUser };
         if (!User.isUser(modifiedUser)) return this._sendError(res, 400);
 
         this._database.users.set(user.id, modifiedUser);

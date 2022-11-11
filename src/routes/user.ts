@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { UserController } from '../controllers/user';
 import type { Database } from '../Database';
+import { UserController } from '../controllers/user';
 import { authenticateAdmin, authenticateMember } from '../middlewares/authenticate';
 
 // Router for '/users'

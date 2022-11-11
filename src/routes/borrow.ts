@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { BorrowController } from '../controllers/borrow';
 import type { Database } from '../Database';
+import { BorrowController } from '../controllers/borrow';
 import { authenticateMember, authenticateUser } from '../middlewares/authenticate';
 
 // Router for '/borrows'
