@@ -4,7 +4,7 @@ import { User } from '../models/User';
 
 export function authenticateAdmin(database: Database) {
     return function _(req: Request, res: Response, next: NextFunction) {
-        const token = req.headers.authorization;
+        const token = req.headers.authorization ?? String(req.query['token']);
         const user = token ? database.verifyToken(token) : null;
         if (!user) return res.status(401).json({ status: 401 });
 
@@ -19,7 +19,7 @@ export function authenticateAdmin(database: Database) {
 
 export function authenticateMember(database: Database) {
     return function _(req: Request, res: Response, next: NextFunction) {
-        const token = req.headers.authorization;
+        const token = req.headers.authorization ?? String(req.query['token']);
         const user = token ? database.verifyToken(token) : null;
         if (!user) return res.status(401).json({ status: 401 });
 
@@ -47,7 +47,7 @@ export function authenticateMember(database: Database) {
 
 export function authenticateUser(database: Database) {
     return function _(req: Request, res: Response, next: NextFunction) {
-        const token = req.headers.authorization;
+        const token = req.headers.authorization ?? String(req.query['token']);
         const user = token ? database.verifyToken(token) : null;
         if (!user) {
             res.status(401).json({ status: 401 });
