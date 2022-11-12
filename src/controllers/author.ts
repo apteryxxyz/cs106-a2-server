@@ -15,7 +15,7 @@ export class AuthorContoller {
     }
 
     public createAuthor(req: Request, res: Response) {
-        if (!isObject(req.body)) return this._sendError(res, 400);
+        if (!isObject(req.body) || !Author.isNewAuthor(req.body)) return this._sendError(res, 400);
         const newAuthor: Record<string, any> = { ...req.body };
         newAuthor['id'] = this._database.flake();
 

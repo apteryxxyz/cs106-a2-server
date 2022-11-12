@@ -15,11 +15,11 @@ export class BorrowController {
     }
 
     public createBorrow(req: Request, res: Response) {
-        if (!isObject(req.body)) return this._sendError(res, 400);
+        if (!isObject(req.body) || !Borrow.isNewBorrow(req.body)) return this._sendError(res, 400);
         const newBorrow: Record<string, any> = { ...req.body };
         newBorrow['id'] = this._database.flake();
 
-        const book = this._database.users.get(newBorrow['book_id']);
+        const book = this._database.books.get(newBorrow['book_id']);
         if (!book) return this._sendError(res, 404);
 
         const user = this._database.users.get(newBorrow['borrower_id']);

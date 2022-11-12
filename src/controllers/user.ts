@@ -30,7 +30,7 @@ export class UserController {
     }
 
     public createUser(req: Request, res: Response) {
-        if (!isObject(req.body)) return this._sendError(res, 400);
+        if (!isObject(req.body) || !User.isNewUser(req.body)) return this._sendError(res, 400);
         const newUser: Record<string, any> = { ...req.body };
         newUser['id'] = this._database.flake();
 
