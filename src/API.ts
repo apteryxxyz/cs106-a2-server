@@ -1,4 +1,5 @@
 import type { Server } from 'node:http';
+import { resolve } from 'node:path';
 import type { Express } from 'express';
 import * as express from 'express';
 import type { Database } from './Database';
@@ -19,6 +20,8 @@ export class API {
         this.database = database;
 
         this.rest.use(express.json());
+
+        this.rest.use('/raw', express.static(resolve('data')));
 
         this.rest.use(
             '/api',
