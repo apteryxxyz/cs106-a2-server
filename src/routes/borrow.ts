@@ -13,7 +13,7 @@ export function borrowRoutes(database: Database): Router {
     const _m = () => authenticateMember(database);
 
     router.get('/borrows', _u(), __(controller.listBorrows));
-    router.put('/borrows', _u(), __(controller.createBorrow));
+    router.put('/borrows', _m(), __(controller.createBorrow));
 
     router.get('/borrows/:borrowId', _m(), __(controller.getBorrow));
     router.delete('/borrows/:borrowId', _m(), __(controller.deleteBorrow));
