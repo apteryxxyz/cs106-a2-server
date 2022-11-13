@@ -28,6 +28,7 @@ export class BookContoller {
     public createBook(req: Request, res: Response) {
         if (!isObject(req.body) || !Book.isNewBook(req.body)) return this._sendError(res, 400);
         const newBook: Record<string, any> = { ...req.body };
+        delete newBook['author'];
         newBook['id'] = this._database.flake();
 
         if (this._database.books.some(bk => bk.isbn === newBook['isbn']))
