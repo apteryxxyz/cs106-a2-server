@@ -40,6 +40,6 @@ export namespace Author {
     }
 
     export function stripAuthor(data: Record<string, any>) {
-        return pick(data, Object.keys(schema));
+        return pick(data, schema.keys);
     }
 }
