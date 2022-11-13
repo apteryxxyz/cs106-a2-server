@@ -45,6 +45,6 @@ export namespace Book {
     }
 
     export function stripBook(data: Record<string, any>) {
-        return pick(data, schema.keys);
+        return pick(data, Reflect.get(schema, 'keys'));
     }
 }

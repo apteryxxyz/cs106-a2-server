@@ -42,6 +42,6 @@ export namespace Borrow {
     }
 
     export function stripBorrow(data: Record<string, any>) {
-        return pick(data, schema.keys);
+        return pick(data, Reflect.get(schema, 'keys'));
     }
 }
