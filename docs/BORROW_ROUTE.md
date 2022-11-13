@@ -6,7 +6,9 @@ Firstly, a borrow object has the following shape.
 
 -   `id` Borrow ID
 -   `book_id` The ID of the book with borrow is for
--   `borrower_id` ID of the user that is borrowing this book
+-   `book` [Book Object](./BOOK_ROUTES.md#book-object)
+-   `user_id` ID of the user that is borrowing this book
+-   `user` [User Object](./USER_ROUTES.md#user-object)
 -   `issued_at` Unix timestamp that this book was borrowed at
 -   `issued_for` Amount of time for this borrow in seconds
 

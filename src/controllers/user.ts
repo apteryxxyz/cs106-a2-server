@@ -12,11 +12,12 @@ export class UserController {
 
     public userLogin(req: Request, res: Response) {
         const { email_address, password } = req.body;
-        const user = this._database.users.find(usr => usr.email_address === email_address);
+        const user = this._database.getUsers().find(usr => usr.email_address === email_address);
         if (!user) return this._sendError(res, 401);
 
         if (user.password !== password) return this._sendError(res, 401);
         return res.json({
+            // IDEA: user: user,
             user_id: user.id,
             user_type: user.type,
             token: this._database.createToken(user),
@@ -24,10 +25,9 @@ export class UserController {
     }
 
     public listUsers(_req: Request, res: Response) {
-        const users = Array.from(this._database.users.values());
-        const cloned = JSON.parse(JSON.stringify(users));
-        for (const usr of cloned) Reflect.set(usr, 'password', null);
-        return res.json(cloned);
+        const users = this._database.getUsers();
+        for (const usr of users) Reflect.set(usr, 'password', null);
+        return res.json(users);
     }
 
     public createUser(req: Request, res: Response) {
@@ -35,17 +35,21 @@ export class UserController {
         const newUser: Record<string, any> = { ...req.body };
         newUser['id'] = this._database.flake();
 
-        if (this._database.users.some(usr => usr.email_address === newUser['email_address']))
+        if (!User.isUser(newUser)) return this._sendError(res, 400);
+
+        if (
+            this._database.users //
+                .some(usr => usr.email_address === newUser.email_address)
+        )
             return this._sendError(res, 409);
 
-        if (!User.isUser(newUser)) return this._sendError(res, 400);
         this._database.users.set(newUser.id, newUser);
         this._database.save();
         return res.json(newUser);
     }
 
     public getUser(req: Request, res: Response) {
-        const user = this._database.users.get(req.params['userId']);
+        const user = this._database.getUser(req.params['userId']);
         if (!user) return this._sendError(res, 404);
 
         const cloned = JSON.parse(JSON.stringify(user));
@@ -54,15 +58,17 @@ export class UserController {
     }
 
     public listUserBorrows(req: Request, res: Response) {
-        const user = this._database.users.get(req.params['userId']);
+        const user = this._database.getUser(req.params['userId']);
         if (!user) return this._sendError(res, 404);
 
-        const userBorrows = this._database.borrows.filter(brw => brw.borrower_id === user.id);
-        return res.json(Array.from(userBorrows.values()));
+        const userBorrows = this._database
+            .getBorrows() //
+            .filter(brw => brw.user_id === user.id);
+        return res.json(userBorrows);
     }
 
     public modifyUser(req: Request, res: Response) {
-        const user = this._database.users.get(req.params['userId']);
+        const user = this._database.getUser(req.params['userId']);
         if (!user) return this._sendError(res, 404);
 
         if (!isObject(req.body)) return this._sendError(res, 400);
@@ -71,6 +77,7 @@ export class UserController {
         delete newUser['type'];
 
         if (!User.isPartialUser(newUser)) return this._sendError(res, 400);
+
         const modifiedUser = { ...user, ...newUser };
         if (!User.isUser(modifiedUser)) return this._sendError(res, 400);
 
@@ -80,7 +87,7 @@ export class UserController {
     }
 
     public deleteUser(req: Request, res: Response) {
-        const user = this._database.users.get(req.params['userId']);
+        const user = this._database.getUser(req.params['userId']);
         if (!user) return this._sendError(res, 404);
 
         this._database.users.delete(user.id);

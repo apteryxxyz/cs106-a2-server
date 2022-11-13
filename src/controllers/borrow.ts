@@ -11,7 +11,7 @@ export class BorrowController {
     }
 
     public listBorrows(_req: Request, res: Response) {
-        return res.json(Array.from(this._database.borrows.values()));
+        return res.json(this._database.getBorrows());
     }
 
     public createBorrow(req: Request, res: Response) {
@@ -19,25 +19,26 @@ export class BorrowController {
         const newBorrow: Record<string, any> = { ...req.body };
         newBorrow['id'] = this._database.flake();
 
-        const book = this._database.books.get(newBorrow['book_id']);
+        if (!Borrow.isBorrow(newBorrow)) return this._sendError(res, 400);
+
+        const book = this._database.getBook(newBorrow.book_id);
         if (!book) return this._sendError(res, 404);
 
-        const user = this._database.users.get(newBorrow['borrower_id']);
+        const user = this._database.getUser(newBorrow.user_id);
         if (!user) return this._sendError(res, 404);
 
-        if (!Borrow.isBorrow(newBorrow)) return this._sendError(res, 400);
         this._database.borrows.set(newBorrow.id, newBorrow);
         this._database.save();
         return res.json(newBorrow);
     }
 
     public getBorrow(req: Request, res: Response) {
-        const borrow = this._database.borrows.get(req.params['borrowId']);
+        const borrow = this._database.getBorrow(req.params['borrowId']);
         return borrow ? res.json(borrow) : this._sendError(res, 404);
     }
 
     public deleteBorrow(req: Request, res: Response) {
-        const borrow = this._database.borrows.get(req.params['borrowId']);
+        const borrow = this._database.getBorrow(req.params['borrowId']);
         if (!borrow) return this._sendError(res, 404);
 
         this._database.books.delete(borrow.id);

@@ -11,7 +11,7 @@ export class AuthorContoller {
     }
 
     public listAuthors(_req: Request, res: Response) {
-        return res.json(Array.from(this._database.authors.values()));
+        return res.json(this._database.getAuthors());
     }
 
     public createAuthor(req: Request, res: Response) {
@@ -26,20 +26,22 @@ export class AuthorContoller {
     }
 
     public getAuthor(req: Request, res: Response) {
-        const author = this._database.authors.get(req.params['authorId']);
+        const author = this._database.getAuthor(req.params['authorId']);
         return author ? res.json(author) : this._sendError(res, 404);
     }
 
     public listAuthorsBooks(req: Request, res: Response) {
-        const author = this._database.authors.get(req.params['authorId']);
+        const author = this._database.getAuthor(req.params['authorId']);
         if (!author) return this._sendError(res, 404);
 
-        const authorBooks = this._database.books.filter(bk => bk.author_id === author.id);
-        return res.json(Array.from(authorBooks.values()));
+        const books = this._database
+            .getBooks() //
+            .filter(bk => bk.author.id === author.id);
+        return res.json(books);
     }
 
     public modifyAuthor(req: Request, res: Response) {
-        const author = this._database.authors.get(req.params['authorId']);
+        const author = this._database.getAuthor(req.params['authorId']);
         if (!author) return this._sendError(res, 404);
 
         if (!isObject(req.body)) return this._sendError(res, 400);
@@ -56,7 +58,7 @@ export class AuthorContoller {
     }
 
     public deleteAuthor(req: Request, res: Response) {
-        const author = this._database.authors.get(req.params['authorId']);
+        const author = this._database.getAuthor(req.params['authorId']);
         if (!author) return this._sendError(res, 404);
 
         this._database.authors.delete(author.id);

@@ -34,8 +34,8 @@ export function authenticateMember(database: Database) {
             next();
             return;
         } else if (borrowId) {
-            const borrow = database.borrows.get(borrowId);
-            if (borrow && borrow.borrower_id === user.id) {
+            const borrow = database.getBorrow(borrowId);
+            if (borrow && borrow.user_id === user.id) {
                 next();
                 return;
             }

@@ -62,6 +62,52 @@ export class Database {
         return this;
     }
 
+    public getUser(id: string): User | null {
+        return this._clone(this.users.get(id));
+    }
+
+    public getUsers(): User[] {
+        return this._clone(Array.from(this.users.values()));
+    }
+
+    public getAuthor(id: string): Author | null {
+        return this._clone(this.authors.clone().get(id));
+    }
+
+    public getAuthors(): Author[] {
+        return this._clone(Array.from(this.authors.values()));
+    }
+
+    public getBook(id: string): Book | null {
+        const book = this._clone(this.books.get(id));
+        return book ? Object.assign(book, { author: this.getAuthor(book.author_id) }) : null;
+    }
+
+    public getBooks(): (Book & { author: Author })[] {
+        return this._clone(Array.from(this.books.values())).map((bk: Book) =>
+            Object.assign(bk, { author: this.getAuthor(bk.author_id) })
+        );
+    }
+
+    public getBorrow(id: string): (Borrow & { book: Book; user: User }) | null {
+        const borrow = this._clone(this.borrows.get(id));
+        return borrow
+            ? Object.assign(borrow, {
+                  book: this.getBook(borrow.book_id),
+                  user: this.getUser(borrow.user_id),
+              })
+            : null;
+    }
+
+    public getBorrows(): (Borrow & { book: Book; user: User })[] {
+        return this._clone(Array.from(this.borrows.values())).map((br: Borrow) =>
+            Object.assign(br, {
+                book: this.getBook(br.book_id),
+                user: this.getUser(br.user_id),
+            })
+        );
+    }
+
     public createToken(user: User) {
         return jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     }
@@ -73,5 +119,10 @@ export class Database {
         } catch {
             return null;
         }
+    }
+
+    private _clone(data: any) {
+        if (!data) return null;
+        return JSON.parse(JSON.stringify(data));
     }
 }

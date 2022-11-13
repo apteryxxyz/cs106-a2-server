@@ -7,6 +7,7 @@ Firstly, a book object has the following shape.
 -   `id` Book ID
 -   `isbn` The books ISBN code
 -   `author_id` ID of the books author
+-   `author` [Author Object](./AUTHOR_ROUTES.md#author-object)
 -   `title` Books title
 -   `description` A description of the book
 -   `cover_image_url` URL to the cover image
@@ -19,7 +20,6 @@ Get a list of all of the books.
 **Query** parameters
 
 -   `search {string}` Search query
--   `with_authors {int}` Add the [Author Object](./AUTHOR_ROUTES.md#author-object)
 
 **Response** body
 

@@ -8,7 +8,7 @@ export namespace Borrow {
     export const schema = s.object({
         id: s.string,
         book_id: s.string,
-        borrower_id: s.string,
+        user_id: s.string,
         issued_at: s.number,
         issued_for: s.number,
     });
