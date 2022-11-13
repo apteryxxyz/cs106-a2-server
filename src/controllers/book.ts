@@ -27,7 +27,7 @@ export class BookContoller {
 
     public createBook(req: Request, res: Response) {
         if (!isObject(req.body) || !Book.isNewBook(req.body)) return this._sendError(res, 400);
-        const newBook: Record<string, any> = { ...req.body };
+        const newBook = Book.stripBook(req.body);
         delete newBook['author'];
         newBook['id'] = this._database.flake();
 
@@ -64,7 +64,7 @@ export class BookContoller {
         if (!book) return this._sendError(res, 404);
 
         if (!isObject(req.body)) return this._sendError(res, 400);
-        const newBook: Record<string, any> = { ...req.body };
+        const newBook = Book.stripBook(req.body);
         delete newBook['id'];
         delete newBook['author'];
 

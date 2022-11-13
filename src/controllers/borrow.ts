@@ -16,7 +16,7 @@ export class BorrowController {
 
     public createBorrow(req: Request, res: Response) {
         if (!isObject(req.body) || !Borrow.isNewBorrow(req.body)) return this._sendError(res, 400);
-        const newBorrow: Record<string, any> = { ...req.body };
+        const newBorrow = Borrow.stripBorrow(req.body);
         newBorrow['id'] = this._database.flake();
         delete newBorrow['user'];
         delete newBorrow['book'];

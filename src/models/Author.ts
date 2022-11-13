@@ -1,4 +1,5 @@
 import { type InferType, s } from '@sapphire/shapeshift';
+import { pick } from 'lodash';
 
 export type Author = InferType<typeof Author.schema>;
 
@@ -36,5 +37,9 @@ export namespace Author {
         } catch {
             return false;
         }
+    }
+
+    export function stripAuthor(data: Record<string, any>) {
+        return pick(data, Object.keys(schema));
     }
 }

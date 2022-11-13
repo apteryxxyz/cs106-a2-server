@@ -1,4 +1,5 @@
 import { type InferType, s } from '@sapphire/shapeshift';
+import { pick } from 'lodash';
 
 export type Borrow = InferType<typeof Borrow.schema>;
 
@@ -38,5 +39,9 @@ export namespace Borrow {
         } catch {
             return false;
         }
+    }
+
+    export function stripBorrow(data: Record<string, any>) {
+        return pick(data, Object.keys(schema));
     }
 }
