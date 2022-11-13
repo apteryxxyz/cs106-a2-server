@@ -16,11 +16,16 @@ Firstly, a book object has the following shape.
 
 Get a list of all of the books.
 
+**Query** parameters
+
+-   `search {string}` Search query
+-   `with_authors {int}` Add the [Author Object](./AUTHOR_ROUTES.md#author-object)
+
 **Response** body
 
 An array of [Book Object](#book-object)s.
 
-## PUT /authors (A)
+## PUT /books (A)
 
 Enter a new book into the database, author must be created before this.
 

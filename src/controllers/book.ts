@@ -12,13 +12,19 @@ export class BookContoller {
     }
 
     public listBooks(req: Request, res: Response) {
-        const query = req.query['q'] ? String(req.query['q']).toLowerCase() : null;
+        const search = String(req.query['search'] ?? req.query['q']);
+        const withAuthors = Number.parseInt(req.query['with_authors'] as string, 10);
 
         let books = Array.from(this._database.books.clone().values());
 
-        if (query) {
-            const keys = ['title', 'description', 'isbn'];
-            const results = fuzzysort.go(query, books, { keys });
+        if (withAuthors === 1) {
+            const getAuthor = (bk: Book) => this._database.authors.get(bk.author_id);
+            books = books.map(bk => Object.assign(bk, { author: getAuthor(bk) }));
+        }
+
+        if (search) {
+            const keys = ['title', 'description', 'isbn', 'author.first_name', 'author.last_name'];
+            const results = fuzzysort.go(search, books, { keys });
             books = results.map(res => res.obj);
         }
 
