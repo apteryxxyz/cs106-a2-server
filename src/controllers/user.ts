@@ -44,9 +44,12 @@ export class UserController {
     }
 
     public getUser(req: Request, res: Response) {
-        const user = this._database.users.clone().get(req.params['userId']);
-        if (user) Reflect.set(user, 'password', null);
-        return user ? res.json(user) : this._sendError(res, 404);
+        const user = this._database.users.get(req.params['userId']);
+        if (!user) return this._sendError(res, 404);
+
+        const cloned = JSON.parse(JSON.stringify(user));
+        Reflect.set(cloned, 'password', null);
+        return res.json(cloned);
     }
 
     public listUserBorrows(req: Request, res: Response) {
