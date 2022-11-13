@@ -24,9 +24,10 @@ export class UserController {
     }
 
     public listUsers(_req: Request, res: Response) {
-        const users = Array.from(this._database.users.clone().values());
-        for (const usr of users) Reflect.set(usr, 'password', null);
-        return res.json(users);
+        const users = Array.from(this._database.users.values());
+        const cloned = JSON.parse(JSON.stringify(users));
+        for (const usr of cloned) Reflect.set(usr, 'password', null);
+        return res.json(cloned);
     }
 
     public createUser(req: Request, res: Response) {
