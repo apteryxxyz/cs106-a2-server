@@ -14,15 +14,15 @@ export class AuthorContoller {
     public listAuthors(req: Request, res: Response) {
         const search = String(req.query['search']);
 
-        let users = this._database.getAuthors();
+        let authors = this._database.getAuthors();
 
         if (search) {
             const keys = ['id', 'first_name', 'last_name'];
-            const results = fuzzysort.go(search, users, { keys });
-            users = results.map(res => res.obj);
+            const results = fuzzysort.go(search, authors, { keys });
+            authors = results.map(res => res.obj);
         }
 
-        return res.json(this._database.getAuthors());
+        return res.json(authors);
     }
 
     public createAuthor(req: Request, res: Response) {
