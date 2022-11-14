@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import * as fuzzysort from 'fuzzysort';
 import { isObject } from 'lodash';
 import type { Database } from '../Database';
 import { Borrow } from '../models/Borrow';
@@ -10,8 +11,23 @@ export class BorrowController {
         this._database = database;
     }
 
-    public listBorrows(_req: Request, res: Response) {
-        return res.json(this._database.getBorrows());
+    public listBorrows(req: Request, res: Response) {
+        const search = String(req.query['search']);
+        const overdueOnly = Boolean(req.query['overdueOnly'] === '1');
+
+        let borrows = this._database.getBorrows();
+
+        if (overdueOnly) {
+            borrows = borrows.filter(brw => Date.now() / 1_000 > brw.issued_at + brw.issued_for);
+        }
+
+        if (search) {
+            const keys = ['id', 'user_id', 'book_id', 'book.title', 'book.description'];
+            const results = fuzzysort.go(search, borrows, { keys });
+            borrows = results.map(res => res.obj);
+        }
+
+        return res.json(borrows);
     }
 
     public createBorrow(req: Request, res: Response) {

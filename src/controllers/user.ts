@@ -79,10 +79,24 @@ export class UserController {
         const user = this._database.getUser(req.params['userId']);
         if (!user) return this._sendError(res, 404);
 
-        const userBorrows = this._database
+        const search = String(req.query['search']);
+        const overdueOnly = Boolean(req.query['overdue_only'] === '1');
+
+        let borrows = this._database
             .getBorrows() //
             .filter(brw => brw.user_id === user.id);
-        return res.json(userBorrows);
+
+        if (overdueOnly) {
+            borrows = borrows.filter(brw => Date.now() / 1_000 > brw.issued_at + brw.issued_for);
+        }
+
+        if (search) {
+            const keys = ['id', 'user_id', 'book_id', 'book.title', 'book.description'];
+            const results = fuzzysort.go(search, borrows, { keys });
+            borrows = results.map(res => res.obj);
+        }
+
+        return res.json(borrows);
     }
 
     public modifyUser(req: Request, res: Response) {
