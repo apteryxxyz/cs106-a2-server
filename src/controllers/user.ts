@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import * as fuzzysort from 'fuzzysort';
 import { isObject } from 'lodash';
 import type { Database } from '../Database';
 import { User } from '../models/User';
@@ -24,9 +25,26 @@ export class UserController {
         });
     }
 
-    public listUsers(_req: Request, res: Response) {
-        const users = this._database.getUsers();
+    public listUsers(req: Request, res: Response) {
+        const search = String(req.query['search']);
+        const adminOnly = Boolean(req.query['admin_only'] === '1');
+        const memberOnly = Boolean(req.query['member_only'] === '1');
+
+        let users = this._database.getUsers();
         for (const usr of users) Reflect.set(usr, 'password', null);
+
+        if (adminOnly) {
+            users = users.filter(usr => usr.type === User.Type.Admin);
+        } else if (memberOnly) {
+            users = users.filter(usr => usr.type === User.Type.Member);
+        }
+
+        if (search) {
+            const keys = ['id', 'first_name', 'last_name', 'email_address'];
+            const results = fuzzysort.go(search, users, { keys });
+            users = results.map(res => res.obj);
+        }
+
         return res.json(users);
     }
 
