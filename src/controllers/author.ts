@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import * as fuzzysort from 'fuzzysort';
 import { isObject } from 'lodash';
 import type { Database } from '../Database';
 import { Author } from '../models/Author';
@@ -10,7 +11,17 @@ export class AuthorContoller {
         this._database = database;
     }
 
-    public listAuthors(_req: Request, res: Response) {
+    public listAuthors(req: Request, res: Response) {
+        const search = String(req.query['search']);
+
+        let users = this._database.getAuthors();
+
+        if (search) {
+            const keys = ['id', 'first_name', 'last_name'];
+            const results = fuzzysort.go(search, users, { keys });
+            users = results.map(res => res.obj);
+        }
+
         return res.json(this._database.getAuthors());
     }
 
