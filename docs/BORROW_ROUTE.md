@@ -16,6 +16,11 @@ Firstly, a borrow object has the following shape.
 
 Get a list of all of current borrows.
 
+**Query** parameters
+
+-   `search {string}` Search query
+-   `overdue_only {0|1}` Return overdue borrows only
+
 **Response** body
 
 An array of [Borrow Object](#borrow-object)s.

@@ -34,6 +34,12 @@ Get a new access token for a users account.
 
 Get a list of all the of users, including admins and members. All user `password` fields will be `null`.
 
+**Query** parameters
+
+-   `search {string}` Search query
+-   `members_only {0|1}` Return members only
+-   `admins_only {0|1}` Return admins only
+
 **Response** body
 
 An array of [User Object](#user-object)s.
@@ -77,6 +83,11 @@ Delete a user by their ID.
 ## GET /users/:userId/borrows (M)
 
 Get a list of the currently borrowed books a user has.
+
+**Query** parameters
+
+-   `search {string}` Search query
+-   `overdue_only {0|1}` Return overdue borrows only
 
 **Response** body
 

@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import * as fuzzysort from 'fuzzysort';
 import { isObject } from 'lodash';
 import type { Database } from '../Database';
 import { User } from '../models/User';
@@ -24,9 +25,26 @@ export class UserController {
         });
     }
 
-    public listUsers(_req: Request, res: Response) {
-        const users = this._database.getUsers();
+    public listUsers(req: Request, res: Response) {
+        const search = String(req.query['search']);
+        const adminOnly = Boolean(req.query['admin_only'] === '1');
+        const memberOnly = Boolean(req.query['member_only'] === '1');
+
+        let users = this._database.getUsers();
         for (const usr of users) Reflect.set(usr, 'password', null);
+
+        if (adminOnly) {
+            users = users.filter(usr => usr.type === User.Type.Admin);
+        } else if (memberOnly) {
+            users = users.filter(usr => usr.type === User.Type.Member);
+        }
+
+        if (search) {
+            const keys = ['id', 'first_name', 'last_name', 'email_address'];
+            const results = fuzzysort.go(search, users, { keys });
+            users = results.map(res => res.obj);
+        }
+
         return res.json(users);
     }
 
@@ -61,10 +79,24 @@ export class UserController {
         const user = this._database.getUser(req.params['userId']);
         if (!user) return this._sendError(res, 404);
 
-        const userBorrows = this._database
+        const search = String(req.query['search']);
+        const overdueOnly = Boolean(req.query['overdue_only'] === '1');
+
+        let borrows = this._database
             .getBorrows() //
             .filter(brw => brw.user_id === user.id);
-        return res.json(userBorrows);
+
+        if (overdueOnly) {
+            borrows = borrows.filter(brw => Date.now() / 1_000 > brw.issued_at + brw.issued_for);
+        }
+
+        if (search) {
+            const keys = ['id', 'user_id', 'book_id', 'book.title', 'book.description'];
+            const results = fuzzysort.go(search, borrows, { keys });
+            borrows = results.map(res => res.obj);
+        }
+
+        return res.json(borrows);
     }
 
     public modifyUser(req: Request, res: Response) {
