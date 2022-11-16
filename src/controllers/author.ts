@@ -12,7 +12,7 @@ export class AuthorContoller {
     }
 
     public listAuthors(req: Request, res: Response) {
-        const search = String(req.query['search']);
+        const search = String(req.query['search'] ?? '');
 
         let authors = this._database.getAuthors();
 
