@@ -1,6 +1,5 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import * as process from 'node:process';
-import { setTimeout } from 'node:timers';
 import { Collection } from '@discordjs/collection';
 import * as jwt from 'jsonwebtoken';
 import * as uniqid from 'uniqid';
@@ -27,6 +26,10 @@ export class Database {
     }
 
     public flake = () => uniqid();
+
+    public now() {
+        return Math.floor(Date.now() / 1_000);
+    }
 
     public ensure() {
         const paths = [
@@ -79,36 +82,34 @@ export class Database {
     }
 
     public process() {
-        setTimeout(() => {
-            const borrows = this.getBorrows();
-            const now = Date.now() / 1_000;
-            const overdueBorrows = borrows.filter(brw => now > brw.issued_at + brw.issued_for);
+        const borrows = this.getBorrows();
+        const now = this.now();
+        const overdueBorrows = borrows.filter(brw => now > brw.issued_at + brw.issued_for);
 
-            for (const borrow of overdueBorrows) {
-                const adminMessageId = this.flake();
-                this.messages.set(adminMessageId, {
-                    id: adminMessageId,
-                    for_admin: true,
-                    recipient_id: null,
-                    subject: 'Borrow overdue',
-                    content: `The book ${borrow.book.title} borrowed by ${borrow.user.email_address} is overdue.`,
-                    read_at: null,
-                });
+        for (const borrow of overdueBorrows) {
+            const adminMessageId = this.flake();
+            this.messages.set(adminMessageId, {
+                id: adminMessageId,
+                for_admin: true,
+                recipient_id: null,
+                subject: 'Borrow overdue',
+                content: `The book ${borrow.book.title} borrowed by ${borrow.user.email_address} is overdue.`,
+                read_at: null,
+            });
 
-                const memberMessageId = this.flake();
-                this.messages.set(memberMessageId, {
-                    id: memberMessageId,
-                    for_admin: false,
-                    recipient_id: borrow.user_id,
-                    subject: `${borrow.book.title} is overdue`,
-                    content: `You borrowed the book "${borrow.book.title}", but you didn't return it on time. Please return it as soon as possible.`,
-                    read_at: null,
-                });
+            const memberMessageId = this.flake();
+            this.messages.set(memberMessageId, {
+                id: memberMessageId,
+                for_admin: false,
+                recipient_id: borrow.user_id,
+                subject: `${borrow.book.title} is overdue`,
+                content: `You borrowed the book "${borrow.book.title}", but you didn't return it on time. Please return it as soon as possible.`,
+                read_at: null,
+            });
 
-                borrow.sent_overdue_at = now;
-                this.borrows.set(borrow.id, borrow);
-            }
-        }, 600_000);
+            borrow.sent_overdue_at = now;
+            this.borrows.set(borrow.id, Borrow.stripBorrow(borrow));
+        }
     }
 
     public getAuthor(id: string): Author | null {

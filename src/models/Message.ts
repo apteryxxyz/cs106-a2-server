@@ -48,6 +48,6 @@ export namespace Message {
     }
 
     export function stripMessage(data: Record<string, any>) {
-        return pick(data, Reflect.get(schema, 'keys'));
+        return pick(data, Reflect.get(schema, 'keys')) as Message;
     }
 }

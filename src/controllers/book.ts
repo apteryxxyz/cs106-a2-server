@@ -28,10 +28,9 @@ export class BookContoller {
     public createBook(req: Request, res: Response) {
         if (!isObject(req.body) || !Book.isNewBook(req.body)) return this._sendError(res, 400);
         const newBook = Book.stripBook(req.body);
-        delete newBook['author'];
-        newBook['id'] = this._database.flake();
+        newBook.id = this._database.flake();
 
-        if (this._database.books.some(bk => bk.isbn === newBook['isbn']))
+        if (this._database.books.some(bk => bk.isbn === newBook.isbn))
             return this._sendError(res, 409);
 
         if (!Book.isBook(newBook)) return this._sendError(res, 400);
@@ -65,8 +64,7 @@ export class BookContoller {
 
         if (!isObject(req.body)) return this._sendError(res, 400);
         const newBook = Book.stripBook(req.body);
-        delete newBook['id'];
-        delete newBook['author'];
+        Reflect.deleteProperty(newBook, 'id');
 
         if (!Book.isPartialBook(newBook)) return this._sendError(res, 400);
 

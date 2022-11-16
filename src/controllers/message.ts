@@ -35,7 +35,7 @@ export class MessageController {
         const message = this._database.getMessage(req.params['messageId']);
         if (!message) return this._sendError(res, 404);
 
-        message.read_at = Date.now() / 1_000;
+        message.read_at = this._database.now();
         this._database.messages.set(message.id, message);
         this._database.save();
 

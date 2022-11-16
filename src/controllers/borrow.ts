@@ -18,7 +18,7 @@ export class BorrowController {
         let borrows = this._database.getBorrows();
 
         if (overdueOnly) {
-            borrows = borrows.filter(brw => Date.now() / 1_000 > brw.issued_at + brw.issued_for);
+            borrows = borrows.filter(brw => this._database.now() > brw.issued_at + brw.issued_for);
         }
 
         if (search) {
@@ -33,10 +33,8 @@ export class BorrowController {
     public createBorrow(req: Request, res: Response) {
         if (!isObject(req.body) || !Borrow.isNewBorrow(req.body)) return this._sendError(res, 400);
         const newBorrow = Borrow.stripBorrow(req.body);
-        newBorrow['id'] = this._database.flake();
-        newBorrow['sent_overdue_at'] = null;
-        delete newBorrow['user'];
-        delete newBorrow['book'];
+        newBorrow.id = this._database.flake();
+        newBorrow.sent_overdue_at = null;
 
         if (!Borrow.isBorrow(newBorrow)) return this._sendError(res, 400);
 
