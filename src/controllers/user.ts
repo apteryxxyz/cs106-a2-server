@@ -79,7 +79,7 @@ export class UserController {
         const user = this._database.getUser(req.params['userId']);
         if (!user) return this._sendError(res, 404);
 
-        const search = String(req.query['search']);
+        const search = String(req.query['search'] ?? '');
         const overdueOnly = Boolean(req.query['overdue_only'] === '1');
 
         let borrows = this._database
