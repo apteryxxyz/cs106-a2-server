@@ -12,7 +12,7 @@ export class BookContoller {
     }
 
     public listBooks(req: Request, res: Response) {
-        const search = String(req.query['search'] ?? req.query['q']);
+        const search = String(req.query['search'] ?? req.query['q'] ?? '');
 
         let books = this._database.getBooks();
 
