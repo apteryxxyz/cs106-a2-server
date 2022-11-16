@@ -26,7 +26,7 @@ export class UserController {
     }
 
     public listUsers(req: Request, res: Response) {
-        const search = String(req.query['search']);
+        const search = String(req.query['search'] ?? '');
         const adminOnly = Boolean(req.query['admin_only'] === '1');
         const memberOnly = Boolean(req.query['member_only'] === '1');
 
@@ -79,7 +79,7 @@ export class UserController {
         const user = this._database.getUser(req.params['userId']);
         if (!user) return this._sendError(res, 404);
 
-        const search = String(req.query['search']);
+        const search = String(req.query['search'] ?? '');
         const overdueOnly = Boolean(req.query['overdue_only'] === '1');
 
         let borrows = this._database
