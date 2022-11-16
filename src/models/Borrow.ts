@@ -12,6 +12,7 @@ export namespace Borrow {
         user_id: s.string,
         issued_at: s.number,
         issued_for: s.number,
+        sent_overdue_at: s.number.nullable,
     });
 
     export function isPartialBorrow(data: unknown): data is Partial<Borrow> {

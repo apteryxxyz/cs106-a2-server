@@ -34,6 +34,7 @@ export class BorrowController {
         if (!isObject(req.body) || !Borrow.isNewBorrow(req.body)) return this._sendError(res, 400);
         const newBorrow = Borrow.stripBorrow(req.body);
         newBorrow['id'] = this._database.flake();
+        newBorrow['sent_overdue_at'] = null;
         delete newBorrow['user'];
         delete newBorrow['book'];
 

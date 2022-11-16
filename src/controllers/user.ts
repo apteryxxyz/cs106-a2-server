@@ -99,6 +99,42 @@ export class UserController {
         return res.json(borrows);
     }
 
+    public listUserMessages(req: Request, res: Response) {
+        const user = this._database.getUser(req.params['userId']);
+        if (!user) return this._sendError(res, 404);
+
+        const search = String(req.query['search']);
+        const unreadOnly = Boolean(req.query['unread_only'] === '1');
+
+        let messages = this._database
+            .getMessages() //
+            .filter(msg => msg.recipient_id === user.id);
+
+        if (unreadOnly) {
+            messages = messages.filter(msg => !msg.read_at);
+        }
+
+        if (search) {
+            const keys = ['id', 'subject', 'content'];
+            const results = fuzzysort.go(search, messages, { keys });
+            messages = results.map(res => res.obj);
+        }
+
+        return res.json(messages);
+    }
+
+    public getUserMessage(req: Request, res: Response) {
+        const user = this._database.getUser(req.params['userId']);
+        if (!user) return this._sendError(res, 404);
+
+        const message = this._database.getMessage(req.params['messageId']);
+        if (!message) return this._sendError(res, 404);
+
+        if (message.recipient_id !== user.id) return this._sendError(res, 401);
+
+        return res.json(message);
+    }
+
     public modifyUser(req: Request, res: Response) {
         const user = this._database.getUser(req.params['userId']);
         if (!user) return this._sendError(res, 404);

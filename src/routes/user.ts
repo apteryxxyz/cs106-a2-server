@@ -23,5 +23,8 @@ export function userRoutes(database: Database): Router {
 
     router.get('/users/:userId/borrows', _m(), __(controller.listUserBorrows));
 
+    router.get('/users/:userId/messages', _m(), __(controller.listUserMessages));
+    router.get('/users/:userId/messages/:messageId', _m(), __(controller.getUserMessage));
+
     return router;
 }

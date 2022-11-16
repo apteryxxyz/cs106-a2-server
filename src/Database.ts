@@ -1,11 +1,13 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import * as process from 'node:process';
+import { setTimeout } from 'node:timers';
 import { Collection } from '@discordjs/collection';
 import * as jwt from 'jsonwebtoken';
 import * as uniqid from 'uniqid';
 import { Author } from './models/Author';
 import { Book } from './models/Book';
 import { Borrow } from './models/Borrow';
+import { Message } from './models/Message';
 import { User } from './models/User';
 
 export class Database {
@@ -13,9 +15,11 @@ export class Database {
 
     public books = new Collection<string, Book>();
 
-    public users = new Collection<string, User>();
-
     public borrows = new Collection<string, Borrow>();
+
+    public messages = new Collection<string, Message>();
+
+    public users = new Collection<string, User>();
 
     public constructor() {
         this.ensure();
@@ -25,7 +29,13 @@ export class Database {
     public flake = () => uniqid();
 
     public ensure() {
-        const paths = [Author.tablePath, Book.tablePath, Borrow.tablePath, User.tablePath];
+        const paths = [
+            Author.tablePath,
+            Book.tablePath,
+            Borrow.tablePath,
+            Message.tablePath,
+            User.tablePath,
+        ];
         for (const path of paths) if (!existsSync(path)) writeFileSync(path, '[]');
         return this;
     }
@@ -39,6 +49,9 @@ export class Database {
 
         const rawBorrows = JSON.parse(readFileSync(Borrow.tablePath, 'utf8')) as Borrow[];
         for (const borrow of rawBorrows) this.borrows.set(borrow.id, borrow);
+
+        const rawMessages = JSON.parse(readFileSync(Message.tablePath, 'utf8')) as Message[];
+        for (const message of rawMessages) this.messages.set(message.id, message);
 
         const rawUsers = JSON.parse(readFileSync(User.tablePath, 'utf8')) as User[];
         for (const user of rawUsers) this.users.set(user.id, user);
@@ -56,18 +69,46 @@ export class Database {
         const newBorrows = Array.from(this.borrows.values());
         writeFileSync(Borrow.tablePath, JSON.stringify(newBorrows, null, 4));
 
+        const newMessages = Array.from(this.messages.values());
+        writeFileSync(Message.tablePath, JSON.stringify(newMessages, null, 4));
+
         const newUsers = Array.from(this.users.values());
         writeFileSync(User.tablePath, JSON.stringify(newUsers, null, 4));
 
         return this;
     }
 
-    public getUser(id: string): User | null {
-        return this._clone(this.users.get(id));
-    }
+    public process() {
+        setTimeout(() => {
+            const borrows = this.getBorrows();
+            const now = Date.now() / 1_000;
+            const overdueBorrows = borrows.filter(brw => now > brw.issued_at + brw.issued_for);
 
-    public getUsers(): User[] {
-        return this._clone(Array.from(this.users.values()));
+            for (const borrow of overdueBorrows) {
+                const adminMessageId = this.flake();
+                this.messages.set(adminMessageId, {
+                    id: adminMessageId,
+                    for_admin: true,
+                    recipient_id: null,
+                    subject: 'Borrow overdue',
+                    content: `The book ${borrow.book.title} borrowed by ${borrow.user.email_address} is overdue.`,
+                    read_at: null,
+                });
+
+                const memberMessageId = this.flake();
+                this.messages.set(memberMessageId, {
+                    id: memberMessageId,
+                    for_admin: false,
+                    recipient_id: borrow.user_id,
+                    subject: `${borrow.book.title} is overdue`,
+                    content: `You borrowed the book "${borrow.book.title}", but you didn't return it on time. Please return it as soon as possible.`,
+                    read_at: null,
+                });
+
+                borrow.sent_overdue_at = now;
+                this.borrows.set(borrow.id, borrow);
+            }
+        }, 600_000);
     }
 
     public getAuthor(id: string): Author | null {
@@ -106,6 +147,29 @@ export class Database {
                 user: this.getUser(br.user_id),
             })
         );
+    }
+
+    public getMessage(id: string): (Message & { recipient: User }) | null {
+        const message = this._clone(this.messages.get(id));
+        return message
+            ? Object.assign(message, { recipient: this.getUser(message.recipient_id) })
+            : null;
+    }
+
+    public getMessages(): (Message & { recipient: User | null })[] {
+        return this._clone(Array.from(this.messages.values())).map((msg: Message) =>
+            Object.assign(msg, {
+                recipient: msg.recipient_id ? this.getUser(msg.recipient_id) : null,
+            })
+        );
+    }
+
+    public getUser(id: string): User | null {
+        return this._clone(this.users.get(id));
+    }
+
+    public getUsers(): User[] {
+        return this._clone(Array.from(this.users.values()));
     }
 
     public createToken(user: User) {
