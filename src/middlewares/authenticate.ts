@@ -28,17 +28,10 @@ export function authenticateMember(database: Database) {
             return;
         }
 
-        const { userId, borrowId } = req.params;
-
+        const userId = req.params['userId'];
         if (userId && user.id === userId) {
             next();
             return;
-        } else if (borrowId) {
-            const borrow = database.getBorrow(borrowId);
-            if (borrow && borrow.user_id === user.id) {
-                next();
-                return;
-            }
         }
 
         return res.status(403).json({ status: 403 });

@@ -6,6 +6,7 @@ import type { Database } from './Database';
 import { authorRoutes } from './routes/author';
 import { bookRoutes } from './routes/book';
 import { borrowRoutes } from './routes/borrow';
+import { messageRoutes } from './routes/message';
 import { userRoutes } from './routes/user';
 
 export class API {
@@ -28,6 +29,7 @@ export class API {
             authorRoutes(database),
             bookRoutes(database),
             borrowRoutes(database),
+            messageRoutes(database),
             userRoutes(database)
         );
     }

@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import * as fuzzysort from 'fuzzysort';
 import { isObject } from 'lodash';
 import type { Database } from '../Database';
+import { Borrow } from '../models/Borrow';
 import { User } from '../models/User';
 
 export class UserController {
@@ -51,7 +52,7 @@ export class UserController {
     public createUser(req: Request, res: Response) {
         if (!isObject(req.body) || !User.isNewUser(req.body)) return this._sendError(res, 400);
         const newUser = User.stripUser(req.body);
-        newUser['id'] = this._database.flake();
+        newUser.id = this._database.flake();
 
         if (!User.isUser(newUser)) return this._sendError(res, 400);
 
@@ -99,14 +100,85 @@ export class UserController {
         return res.json(borrows);
     }
 
+    public createUserBorrow(req: Request, res: Response) {
+        if (!isObject(req.body)) return this._sendError(res, 400);
+
+        const user = this._database.getUser(req.params['userId']);
+        if (!user) return this._sendError(res, 404);
+
+        const newBorrow = Borrow.stripBorrow(req.body);
+        newBorrow.id = this._database.flake();
+        newBorrow.user_id = user.id;
+        newBorrow.issued_at = this._database.now();
+        newBorrow.sent_overdue_at = null;
+
+        if (!Borrow.isBorrow(newBorrow)) return this._sendError(res, 400);
+
+        const book = this._database.getBook(newBorrow.book_id);
+        console.log(newBorrow, book);
+        if (!book) return this._sendError(res, 404);
+
+        this._database.borrows.set(newBorrow.id, newBorrow);
+        this._database.save();
+        return res.json(newBorrow);
+    }
+
+    public getUserBorrow(req: Request, res: Response) {
+        const user = this._database.getUser(req.params['userId']);
+        if (!user) return this._sendError(res, 404);
+
+        const borrow = this._database.getBorrow(req.params['borrowId']);
+        if (!borrow) return this._sendError(res, 404);
+
+        if (borrow.user_id !== user.id) return this._sendError(res, 401);
+
+        return res.json(borrow);
+    }
+
+    public listUserMessages(req: Request, res: Response) {
+        const user = this._database.getUser(req.params['userId']);
+        if (!user) return this._sendError(res, 404);
+
+        const search = String(req.query['search']);
+        const unreadOnly = Boolean(req.query['unread_only'] === '1');
+
+        let messages = this._database
+            .getMessages() //
+            .filter(msg => msg.recipient_id === user.id);
+
+        if (unreadOnly) {
+            messages = messages.filter(msg => !msg.read_at);
+        }
+
+        if (search) {
+            const keys = ['id', 'subject', 'content'];
+            const results = fuzzysort.go(search, messages, { keys });
+            messages = results.map(res => res.obj);
+        }
+
+        return res.json(messages);
+    }
+
+    public getUserMessage(req: Request, res: Response) {
+        const user = this._database.getUser(req.params['userId']);
+        if (!user) return this._sendError(res, 404);
+
+        const message = this._database.getMessage(req.params['messageId']);
+        if (!message) return this._sendError(res, 404);
+
+        if (message.recipient_id !== user.id) return this._sendError(res, 401);
+
+        return res.json(message);
+    }
+
     public modifyUser(req: Request, res: Response) {
         const user = this._database.getUser(req.params['userId']);
         if (!user) return this._sendError(res, 404);
 
         if (!isObject(req.body)) return this._sendError(res, 400);
         const newUser = User.stripUser(req.body);
-        delete newUser['id'];
-        delete newUser['type'];
+        Reflect.deleteProperty(newUser, 'id');
+        Reflect.deleteProperty(newUser, 'type');
 
         if (!User.isPartialUser(newUser)) return this._sendError(res, 400);
 

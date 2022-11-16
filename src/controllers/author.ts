@@ -28,7 +28,7 @@ export class AuthorContoller {
     public createAuthor(req: Request, res: Response) {
         if (!isObject(req.body) || !Author.isNewAuthor(req.body)) return this._sendError(res, 400);
         const newAuthor = Author.stripAuthor(req.body);
-        newAuthor['id'] = this._database.flake();
+        newAuthor.id = this._database.flake();
 
         if (!Author.isAuthor(newAuthor)) return this._sendError(res, 400);
         this._database.authors.set(newAuthor.id, newAuthor);
@@ -57,7 +57,7 @@ export class AuthorContoller {
 
         if (!isObject(req.body)) return this._sendError(res, 400);
         const newAuthor = Author.stripAuthor(req.body);
-        delete newAuthor['id'];
+        Reflect.deleteProperty(newAuthor, 'id');
 
         if (!Author.isPartialAuthor(newAuthor)) return this._sendError(res, 400);
         const modifiedAuthor = { ...author, ...newAuthor };

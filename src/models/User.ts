@@ -52,6 +52,6 @@ export namespace User {
     }
 
     export function stripUser(data: Record<string, any>) {
-        return pick(data, Reflect.get(schema, 'keys'));
+        return pick(data, Reflect.get(schema, 'keys')) as User;
     }
 }
