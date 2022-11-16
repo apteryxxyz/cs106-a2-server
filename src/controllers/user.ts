@@ -26,7 +26,7 @@ export class UserController {
     }
 
     public listUsers(req: Request, res: Response) {
-        const search = String(req.query['search']);
+        const search = String(req.query['search'] ?? '');
         const adminOnly = Boolean(req.query['admin_only'] === '1');
         const memberOnly = Boolean(req.query['member_only'] === '1');
 
