@@ -27,8 +27,8 @@ export class UserController {
 
     public listUsers(req: Request, res: Response) {
         const search = String(req.query['search'] ?? '');
-        const adminOnly = Boolean(req.query['admin_only'] === '1');
-        const memberOnly = Boolean(req.query['member_only'] === '1');
+        const adminOnly = Boolean(req.query['admins_only'] === '1');
+        const memberOnly = Boolean(req.query['members_only'] === '1');
 
         let users = this._database.getUsers();
         for (const usr of users) Reflect.set(usr, 'password', null);
