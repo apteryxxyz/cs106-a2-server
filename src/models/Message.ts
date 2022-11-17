@@ -6,11 +6,6 @@ export type Message = InferType<typeof Message.schema>;
 export namespace Message {
     export const tablePath = 'data/messages.json';
 
-    export enum Type {
-        Admin = 1,
-        Member,
-    }
-
     export const schema = s.object({
         id: s.string,
         for_admin: s.boolean,

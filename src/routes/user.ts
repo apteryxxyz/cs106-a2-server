@@ -23,12 +23,5 @@ export function userRoutes(database: Database): Router {
     router.post('/users/:userId', _r(), _m(), __(controller.modifyUser));
     router.delete('/users/:userId', _r(), _m(), __(controller.deleteUser));
 
-    router.get('/users/:userId/borrows', _r(), _m(), __(controller.listUserBorrows));
-    router.put('/users/:userId/borrows', _r(), _m(), __(controller.createUserBorrow));
-    router.get('/users/:userId/borrows/:borrowId', _r(), _m(), __(controller.getUserBorrow));
-
-    router.get('/users/:userId/messages', _r(), _m(), __(controller.listUserMessages));
-    router.get('/users/:userId/messages/:messageId', _r(), _m(), __(controller.getUserMessage));
-
     return router;
 }

@@ -79,16 +79,3 @@ The new [User Object](#user-object).
 ## DELETE /users/:userId (M)
 
 Delete a user by their ID.
-
-## GET /users/:userId/borrows (M)
-
-Get a list of the currently borrowed books a user has.
-
-**Query** parameters
-
--   `search {string}` Search query
--   `overdue_only {0|1}` Return overdue borrows only
-
-**Response** body
-
-An array of [Borrow Object](docs/BORROW_ROUTES.md#borrow-object)s.
