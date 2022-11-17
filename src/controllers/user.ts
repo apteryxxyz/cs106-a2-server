@@ -83,6 +83,7 @@ export class UserController {
         const newUser = User.stripUser(req.body);
         Reflect.deleteProperty(newUser, 'id');
         Reflect.deleteProperty(newUser, 'type');
+        Reflect.deleteProperty(newUser, 'password');
 
         if (!User.isPartialUser(newUser)) return this._sendError(res, 400);
 
