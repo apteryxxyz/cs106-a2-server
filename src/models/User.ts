@@ -14,14 +14,14 @@ export namespace User {
     export const schema = s.object({
         id: s.string,
         type: s.nativeEnum(Type),
-        first_name: s.string,
-        last_name: s.string,
+        first_name: s.string.lengthGreaterThanOrEqual(3),
+        last_name: s.string.lengthGreaterThanOrEqual(3),
         email_address: s.string.email,
-        password: s.string,
+        password: s.string.lengthGreaterThanOrEqual(3),
         phone_number: s.string.phone(),
-        home_address_1: s.string,
-        home_address_2: s.string,
-        post_code: s.string,
+        home_address_1: s.string.lengthGreaterThanOrEqual(3),
+        home_address_2: s.string.lengthGreaterThanOrEqual(3),
+        post_code: s.string.lengthGreaterThanOrEqual(3),
     });
 
     export function isPartialUser(data: unknown): data is Partial<User> {

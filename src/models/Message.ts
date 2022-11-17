@@ -9,10 +9,10 @@ export namespace Message {
     export const schema = s.object({
         id: s.string,
         for_admin: s.boolean,
-        recipient_id: s.string.nullable,
-        subject: s.string,
-        content: s.string,
-        read_at: s.number.nullable,
+        recipient_id: s.string.lengthGreaterThanOrEqual(3).nullable,
+        subject: s.string.lengthGreaterThanOrEqual(3),
+        content: s.string.lengthGreaterThanOrEqual(3),
+        read_at: s.number.positive.nullable,
     });
 
     export function isPartialMessage(data: unknown): data is Partial<Message> {

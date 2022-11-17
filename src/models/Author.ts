@@ -8,8 +8,8 @@ export namespace Author {
 
     export const schema = s.object({
         id: s.string,
-        first_name: s.string,
-        last_name: s.string,
+        first_name: s.string.lengthGreaterThanOrEqual(3),
+        last_name: s.string.lengthGreaterThanOrEqual(3),
     });
 
     export function isPartialAuthor(data: unknown): data is Partial<Author> {

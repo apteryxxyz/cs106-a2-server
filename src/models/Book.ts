@@ -8,13 +8,13 @@ export namespace Book {
 
     export const schema = s.object({
         id: s.string,
-        isbn: s.string,
-        author_id: s.string,
-        title: s.string,
-        description: s.string,
-        genre: s.string,
-        cover_image_url: s.string,
-        quantity: s.number,
+        isbn: s.string.regex(/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/),
+        author_id: s.string.lengthGreaterThanOrEqual(3),
+        title: s.string.lengthGreaterThanOrEqual(3),
+        description: s.string.lengthGreaterThanOrEqual(3),
+        genre: s.string.lengthGreaterThanOrEqual(3),
+        cover_image_url: s.string.url(),
+        quantity: s.number.positive,
     });
 
     export function isPartialBook(data: unknown): data is Partial<Book> {

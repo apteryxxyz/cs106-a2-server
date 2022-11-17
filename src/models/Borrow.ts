@@ -8,11 +8,11 @@ export namespace Borrow {
 
     export const schema = s.object({
         id: s.string,
-        book_id: s.string,
-        user_id: s.string,
-        issued_at: s.number,
-        issued_for: s.number,
-        sent_overdue_at: s.number.nullable,
+        book_id: s.string.lengthGreaterThanOrEqual(3),
+        user_id: s.string.lengthGreaterThanOrEqual(3),
+        issued_at: s.number.positive,
+        issued_for: s.number.positive,
+        sent_overdue_at: s.number.positive.nullable,
     });
 
     export function isPartialBorrow(data: unknown): data is Partial<Borrow> {
