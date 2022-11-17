@@ -73,7 +73,7 @@ export class MessageController {
         const message = this._database.getMessage(req.params['messageId']);
         if (!message) return this._sendError(res, 404);
 
-        if (message.recipient_id !== user.id) return this._sendError(res, 401);
+        if (message.recipient_id !== user.id) return this._sendError(res, 403);
 
         return res.json(message);
     }

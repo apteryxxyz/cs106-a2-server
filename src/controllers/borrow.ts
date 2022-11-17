@@ -117,7 +117,7 @@ export class BorrowController {
         const borrow = this._database.getBorrow(req.params['borrowId']);
         if (!borrow) return this._sendError(res, 404);
 
-        if (borrow.user_id !== user.id) return this._sendError(res, 401);
+        if (borrow.user_id !== user.id) return this._sendError(res, 403);
 
         return res.json(borrow);
     }
@@ -129,7 +129,7 @@ export class BorrowController {
         const borrow = this._database.getBorrow(req.params['borrowId']);
         if (!borrow) return this._sendError(res, 404);
 
-        if (borrow.user_id !== user.id) return this._sendError(res, 401);
+        if (borrow.user_id !== user.id) return this._sendError(res, 403);
 
         this._database.borrows.delete(borrow.id);
         this._database.save();
