@@ -18,7 +18,7 @@ export class UserController {
 
         if (user.password !== password) return this._sendError(res, 401);
         return res.json({
-            // IDEA: user: user,
+            user: User.stripUser(user);
             user_id: user.id,
             user_type: user.type,
             token: this._database.createToken(user),
