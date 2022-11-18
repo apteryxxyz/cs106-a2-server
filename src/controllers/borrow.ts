@@ -44,6 +44,9 @@ export class BorrowController {
         const user = this._database.getUser(newBorrow.user_id);
         if (!user) return this._sendError(res, 404);
 
+        const borrows = this._database.borrows.filter(brw => brw.book_id === book.id);
+        if (borrows.size >= book.quantity) return this._sendError(res, 409);
+
         this._database.borrows.set(newBorrow.id, newBorrow);
         this._database.save();
         return res.json(newBorrow);
