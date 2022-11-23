@@ -20,7 +20,7 @@ jobs:
         env:
           PROJECT_PATH: ${{ secrets.PROJECT_PATH }}
         with:
-          host: ${{ secrets.IP }}
+          host: ${{ secrets.HOSTNAME }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
@@ -28,4 +28,4 @@ jobs:
           script: |
             cd $PROJECT_PATH
             git pull https://github.com/${{ github.repository }}
-            docker-compose up -d --build
+            npm run docker:start
